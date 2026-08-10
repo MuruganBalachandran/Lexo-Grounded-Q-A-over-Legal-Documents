@@ -110,6 +110,6 @@ def chunk_corpus(corpus_dir: str) -> List[Chunk]:
     for md_file in md_files:
         file_chunks = chunk_file(md_file)
         all_chunks.extend(file_chunks)
-        print(f"  [chunker] {md_file.name} → {len(file_chunks)} chunk(s)")
+        print(f"  [chunker] {md_file.name} -> {len(file_chunks)} chunk(s)")
 
     return all_chunks

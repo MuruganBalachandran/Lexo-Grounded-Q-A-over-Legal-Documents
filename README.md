@@ -36,17 +36,18 @@ FastAPI (app/main.py)
   ▼
 LangGraph StateGraph (app/graph/)
   │
-  ├─ retrieve      → Pinecone vector search (Gemini text-embedding-004)
-  ├─ grade_chunks  → Gemini Flash LLM relevance judge
+  ├─ retrieve      → Pinecone vector search (Gemini gemini-embedding-001)
+  ├─ grade_chunks  → Gemini 2.5 Flash LLM relevance judge
   ├─ generate      → Grounded answer + citations  (good path)
   └─ not_found     → Honest refusal               (bad path)
 ```
 
 Key choices:
 - **Section-level chunking** (split on `##` markdown headers) — keeps related legal facts together in one chunk, directly matching the gold-set questions.
-- **Asymmetric embeddings** — `RETRIEVAL_DOCUMENT` at ingest, `RETRIEVAL_QUERY` at query time (Gemini best practice for text-embedding-004).
+- **Asymmetric embeddings** — `RETRIEVAL_DOCUMENT` at ingest, `RETRIEVAL_QUERY` at query time.
 - **LLM-as-judge** grading catches near-miss retrievals (e.g., out-of-corpus questions that look similar to in-corpus facts).
 - **Loop guard** — at most `MAX_RETRIES=2` retrieval attempts; cannot spin forever.
+- **REST API calls** — embeddings and chat both call the Gemini v1 REST API directly via `requests`, avoiding SDK version issues.
 
 ---
 
@@ -104,8 +105,8 @@ Open `.env` and set:
 | `PINECONE_INDEX_NAME` | Name of the index (default: `legixo-qa`) | ✅ |
 | `PINECONE_CLOUD` | Serverless cloud provider (default: `aws`) | optional |
 | `PINECONE_REGION` | Serverless region (default: `us-east-1`) | optional |
-| `EMBED_MODEL` | Gemini embedding model (default: `models/text-embedding-004`) | optional |
-| `CHAT_MODEL` | Gemini chat model (default: `gemini-1.5-flash`) | optional |
+| `EMBED_MODEL` | Gemini embedding model (default: `models/gemini-embedding-001`) | optional |
+| `CHAT_MODEL` | Gemini chat model (default: `gemini-2.5-flash`) | optional |
 | `TOP_K` | Pinecone top-k retrieval (default: `5`) | optional |
 | `MAX_RETRIES` | LangGraph retry limit (default: `2`) | optional |
 | `CORPUS_DIR` | Path to corpus folder (default: `gen_ai_takehome_sample_corpus`) | optional |
@@ -121,7 +122,7 @@ The index is **created automatically** the first time you run ingest (if it does
 **What gets created:**
 - Name: value of `PINECONE_INDEX_NAME` (default `legixo-qa`)
 - Type: Serverless (free tier)
-- Dimension: **768** (Gemini `text-embedding-004` output size)
+- Dimension: **3072** (Gemini `gemini-embedding-001` output size)
 - Metric: cosine
 
 **Required env vars for index creation:**

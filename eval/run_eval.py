@@ -18,12 +18,16 @@ Usage (server must be running):
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
+
+# Force UTF-8 output on Windows so emoji in results.md don't crash the terminal
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 try:
     import requests
@@ -101,7 +105,7 @@ def run_eval(host: str) -> None:
             resp.raise_for_status()
             data = resp.json()
         except Exception as exc:
-            print(f"  ❌ ERROR: {exc}\n")
+            print(f"  [ERROR] {exc}\n")
             errors += 1
             results.append({**case, "status": "ERROR", "error": str(exc)})
             continue
@@ -122,10 +126,10 @@ def run_eval(host: str) -> None:
 
             if status == "PASS":
                 passed += 1
-                print(f"  ✅ PASS  (trace: {' → '.join(trace)})")
+                print(f"  [PASS]  (trace: {' -> '.join(trace)})")
             else:
                 failed += 1
-                print(f"  ❌ FAIL")
+                print(f"  [FAIL]")
                 if not facts_ok:
                     print(f"     Missing facts: {missing}")
                 if not cite_ok:
@@ -146,10 +150,10 @@ def run_eval(host: str) -> None:
 
             if status == "PASS":
                 passed += 1
-                print(f"  ✅ PASS — correctly refused (grounded={grounded})")
+                print(f"  [PASS] correctly refused (grounded={grounded})")
             else:
                 failed += 1
-                print(f"  ❌ FAIL — should have refused but answered (grounded={grounded})")
+                print(f"  [FAIL] should have refused but answered (grounded={grounded})")
                 print(f"     Answer: {answer[:150]}")
 
             results.append({

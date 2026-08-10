@@ -33,19 +33,30 @@ _CHAT_URL = (
 )
 
 
-def _llm_invoke(prompt: str) -> str:
-    """Call the Gemini generateContent REST endpoint directly (v1, no SDK)."""
-    resp = requests.post(
-        _CHAT_URL,
-        params={"key": settings.gemini_api_key},
-        json={
-            "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0},
-        },
-        timeout=60,
-    )
-    resp.raise_for_status()
-    return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+def _llm_invoke(prompt: str, max_retries: int = 4) -> str:
+    """Call the Gemini generateContent REST endpoint directly (v1, no SDK).
+    Retries with exponential backoff on 429 Too Many Requests.
+    """
+    import time
+    delay = 5
+    for attempt in range(max_retries):
+        resp = requests.post(
+            _CHAT_URL,
+            params={"key": settings.gemini_api_key},
+            json={
+                "contents": [{"parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0},
+            },
+            timeout=60,
+        )
+        if resp.status_code == 429:
+            wait = delay * (2 ** attempt)
+            print(f"[llm] Rate limited (429) — retrying in {wait}s ...")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+    raise RuntimeError(f"LLM call failed after {max_retries} retries due to rate limiting.")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
