@@ -20,19 +20,32 @@ import json
 import re
 from typing import Any, Dict, List
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+import requests
 
 from app.config import settings
 from app.embeddings import embed_query
 from app.graph.state import QAState, RetrievedChunk
 from app.pinecone_client import get_index
 
-# ── Shared LLM instance ────────────────────────────────────────────────────────
-_llm = ChatGoogleGenerativeAI(
-    model=settings.chat_model,
-    google_api_key=settings.gemini_api_key,
-    temperature=0,
+_CHAT_URL = (
+    f"https://generativelanguage.googleapis.com/v1/models/"
+    f"gemini-2.5-flash:generateContent"
 )
+
+
+def _llm_invoke(prompt: str) -> str:
+    """Call the Gemini generateContent REST endpoint directly (v1, no SDK)."""
+    resp = requests.post(
+        _CHAT_URL,
+        params={"key": settings.gemini_api_key},
+        json={
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 0},
+        },
+        timeout=60,
+    )
+    resp.raise_for_status()
+    return resp.json()["candidates"][0]["content"]["parts"][0]["text"]
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -133,8 +146,7 @@ def grade_chunks(state: QAState) -> Dict[str, Any]:
     )
 
     prompt = _GRADE_PROMPT.format(question=question, chunks_json=chunks_json)
-    response = _llm.invoke(prompt)
-    raw = response.content.strip()
+    raw = _llm_invoke(prompt).strip()
 
     # Strip markdown code fences if present
     raw = re.sub(r"^```(?:json)?\s*", "", raw)
@@ -202,8 +214,7 @@ def generate(state: QAState) -> Dict[str, Any]:
     )
 
     prompt = _GENERATE_PROMPT.format(question=question, chunks_text=chunks_text)
-    response = _llm.invoke(prompt)
-    answer = response.content.strip()
+    answer = _llm_invoke(prompt).strip()
 
     citations = [
         {

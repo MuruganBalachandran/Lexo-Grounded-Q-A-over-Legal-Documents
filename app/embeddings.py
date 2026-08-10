@@ -1,10 +1,12 @@
 """
 app/embeddings.py
 ─────────────────
-Thin wrapper around the Gemini Embeddings API via langchain-google-genai.
+Thin wrapper around the Gemini Embeddings REST API.
+Calls the v1 REST endpoint directly via `requests` to avoid SDK version
+incompatibilities between google-genai (v1beta) and google-generativeai.
 
-model: models/text-embedding-004
-  - Output dimension: 768
+model: models/gemini-embedding-001
+  - Output dimension: 3072
   - task_type: "RETRIEVAL_DOCUMENT" for ingest, "RETRIEVAL_QUERY" for queries
 
 Usage:
@@ -16,38 +18,62 @@ Usage:
 
 from __future__ import annotations
 
-import os
 from typing import List
 
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import requests
 
 from app.config import settings
 
-# Set the API key in env so langchain picks it up
-os.environ.setdefault("GOOGLE_API_KEY", settings.gemini_api_key)
+_BASE = "https://generativelanguage.googleapis.com/v1"
 
 
-def _make_embedder(task_type: str) -> GoogleGenerativeAIEmbeddings:
-    return GoogleGenerativeAIEmbeddings(
-        model=settings.embed_model,
-        google_api_key=settings.gemini_api_key,
-        task_type=task_type,
-    )
+def _model_id() -> str:
+    """Return the bare model id, stripping the 'models/' prefix if present."""
+    return settings.embed_model.replace("models/", "")
 
 
 def embed_documents(texts: List[str]) -> List[List[float]]:
     """
-    Embed a list of document chunks.
+    Embed a list of document chunks via batchEmbedContents.
     Uses task_type='RETRIEVAL_DOCUMENT' for optimal asymmetric retrieval.
     """
-    embedder = _make_embedder("RETRIEVAL_DOCUMENT")
-    return embedder.embed_documents(texts)
+    model = _model_id()
+    url = f"{_BASE}/models/{model}:batchEmbedContents"
+    params = {"key": settings.gemini_api_key}
+
+    body = {
+        "requests": [
+            {
+                "model": f"models/{model}",
+                "content": {"parts": [{"text": text}]},
+                "taskType": "RETRIEVAL_DOCUMENT",
+            }
+            for text in texts
+        ]
+    }
+
+    response = requests.post(url, json=body, params=params, timeout=120)
+    response.raise_for_status()
+    data = response.json()
+    return [emb["values"] for emb in data["embeddings"]]
 
 
 def embed_query(text: str) -> List[float]:
     """
-    Embed a single user query.
+    Embed a single user query via embedContent.
     Uses task_type='RETRIEVAL_QUERY' to match the asymmetric retrieval setup.
     """
-    embedder = _make_embedder("RETRIEVAL_QUERY")
-    return embedder.embed_query(text)
+    model = _model_id()
+    url = f"{_BASE}/models/{model}:embedContent"
+    params = {"key": settings.gemini_api_key}
+
+    body = {
+        "model": f"models/{model}",
+        "content": {"parts": [{"text": text}]},
+        "taskType": "RETRIEVAL_QUERY",
+    }
+
+    response = requests.post(url, json=body, params=params, timeout=30)
+    response.raise_for_status()
+    data = response.json()
+    return data["embedding"]["values"]

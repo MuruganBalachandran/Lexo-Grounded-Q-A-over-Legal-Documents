@@ -5,9 +5,12 @@ uvicorn[standard]>=0.29.0
 # LangGraph + LangChain
 langgraph>=0.2.0
 langchain>=0.2.0
-langchain-google-genai>=1.0.0
+langchain-google-genai>=4.0.0
 langchain-pinecone>=0.1.0
 langchain-text-splitters>=0.2.0
+
+# Google AI (stable SDK — uses v1 API, supports text-embedding-004)
+google-generativeai>=0.8.0
 
 # Pinecone
 pinecone-client>=3.2.0

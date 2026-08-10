@@ -6,8 +6,8 @@ Pinecone index management.
 - get_or_create_index(): creates a serverless index if it doesn't exist.
 - get_index(): returns a ready-to-use Pinecone Index object.
 
-Gemini's `text-embedding-004` model outputs 768-dimensional vectors,
-so the index is created with dimension=768 and cosine metric.
+Gemini's `gemini-embedding-001` model outputs 3072-dimensional vectors,
+so the index is created with dimension=3072 and cosine metric.
 
 Idempotency: calling get_or_create_index() twice is safe — Pinecone's
 describe_index_stats will confirm existence and the function returns
@@ -22,8 +22,8 @@ from pinecone import Pinecone, ServerlessSpec
 
 from app.config import settings
 
-# ── Embedding dimension for models/text-embedding-004 ─────────────────────────
-EMBED_DIM = 768
+# ── Embedding dimension for models/gemini-embedding-001 ─────────────────────────
+EMBED_DIM = 3072
 METRIC = "cosine"
 
 

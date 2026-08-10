@@ -26,8 +26,8 @@ class Settings(BaseSettings):
     pinecone_region: str = "us-east-1"
 
     # ── Gemini Models ─────────────────────────────────────────────────────────
-    # text-embedding-004 produces 768-dimensional vectors
-    embed_model: str = "models/text-embedding-004"
+    # gemini-embedding-001 produces 3072-dimensional vectors
+    embed_model: str = "models/gemini-embedding-001"
     chat_model: str = "gemini-1.5-flash"
 
     # ── Retrieval ────────────────────────────────────────────────────────────
