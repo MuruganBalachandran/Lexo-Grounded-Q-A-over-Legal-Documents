@@ -1,18 +1,18 @@
 """
-eval/run_eval.py
+backend/eval/run_eval.py
 ────────────────
 Evaluation script for the Legixo Q&A API.
 
-Calls POST /ask for every test case in eval/test_cases.json.
+Calls POST /ask for every test case in backend/eval/test_cases.json.
 Checks:
   - In-corpus: expected facts appear in the answer (substring match)
   - In-corpus: at least one expected source file appears in citations
   - Out-of-corpus: grounded=False OR answer contains refusal phrasing
 
-Results are printed to stdout and saved to eval/results.md.
+Results are printed to stdout and saved to backend/eval/results.md.
 
 Usage (server must be running):
-    python eval/run_eval.py [--host http://localhost:8000]
+    python backend/eval/run_eval.py [--host http://localhost:8000]
 """
 
 from __future__ import annotations

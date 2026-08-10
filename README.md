@@ -89,12 +89,11 @@ pip install -r requirements.txt
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in your real keys:
-
+You can start from the template:
 ```bash
-cp .env.example .env   # macOS/Linux
+cp backend/.env.example backend/.env
+```   # macOS/Linux
 copy .env.example .env # Windows
-```
 
 Open `.env` and set:
 
@@ -284,7 +283,8 @@ Invoke-RestMethod -Uri "http://localhost:8000/ask" `
 
 ## LangGraph Flow
 
-See **[docs/langgraph.md](docs/langgraph.md)** for the full node description table and Mermaid diagram.
+A short summary of the LangGraph node logic is available in:
+**[`backend/docs/langgraph.md`](backend/docs/langgraph.md)** for the full node description table and Mermaid diagram.
 
 **Quick summary:**
 
@@ -305,13 +305,12 @@ START → retrieve → grade_chunks → [conditional edge]
 
 ## Eval / Self-test
 
-```bash
-# Server must be running
-python eval/run_eval.py
-
-# Custom host
-python eval/run_eval.py --host http://localhost:8000
-```
+1. Ensure the API server is running (see above).
+2. Run the evaluation script:
+   ```bash
+   python backend/eval/run_eval.py
+   ```
+3. Full results will be written to `backend/eval/results.md`.
 
 The script runs all 19 test cases (16 in-corpus + 3 out-of-corpus) and saves a detailed report to `eval/results.md`.
 
