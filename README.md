@@ -157,14 +157,14 @@ curl -X POST http://localhost:8000/ingest
 
 **What ingest does:**
 1. Creates the Pinecone index if it doesn't exist.
-2. Reads all `.md` files from `corpus/`.
+2. Reads all `.md` files from `backend/corpus/`.
 3. Splits each file by `##` section headings (one chunk per section).
 4. Embeds each chunk with Gemini `gemini-embedding-001` (`RETRIEVAL_DOCUMENT` task).
 5. Upserts vectors to Pinecone with metadata: `chunk_id`, `source_file`, `section_title`, `text`.
 
 Expected output:
 ```
-[ingest] Starting ingest from 'corpus' ...
+[ingest] Starting ingest from 'backend/corpus' ...
 [pinecone] Index 'legixo-qa' already exists — skipping creation.
   [chunker] 01_matter_memo_arvind_v_northfield.md → 3 chunk(s)
   [chunker] 02_employment_agreement_excerpt.md → 4 chunk(s)
