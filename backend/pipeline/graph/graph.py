@@ -1,5 +1,5 @@
 """
-app/graph/graph.py
+backend/pipeline/graph/graph.py
 ──────────────────
 LangGraph StateGraph wiring and compilation.
 
@@ -33,9 +33,9 @@ from typing import Literal
 
 from langgraph.graph import END, START, StateGraph
 
-from app.config import settings
-from app.graph.nodes import generate, grade_chunks, not_found, retrieve
-from app.graph.state import QAState
+from backend.core.config import settings
+from backend.pipeline.graph.nodes import generate, grade_chunks, not_found, retrieve
+from backend.pipeline.graph.state import QAState
 
 # ── Routing function (conditional edge) ───────────────────────────────────────
 

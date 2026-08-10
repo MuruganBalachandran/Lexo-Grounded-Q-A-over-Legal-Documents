@@ -1,5 +1,5 @@
 """
-app/models.py
+backend/api/schemas/qa.py
 ─────────────
 Pydantic request/response schemas for the FastAPI layer.
 Kept separate from graph state to decouple HTTP concerns from graph internals.

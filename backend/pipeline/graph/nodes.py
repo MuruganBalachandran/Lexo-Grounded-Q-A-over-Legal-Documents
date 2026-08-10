@@ -1,5 +1,5 @@
 """
-app/graph/nodes.py
+backend/pipeline/graph/nodes.py
 ──────────────────
 LangGraph node implementations.
 
@@ -22,10 +22,10 @@ from typing import Any, Dict, List
 
 import requests
 
-from app.config import settings
-from app.embeddings import embed_query
-from app.graph.state import QAState, RetrievedChunk
-from app.pinecone_client import get_index
+from backend.core.config import settings
+from backend.core.embeddings import embed_query
+from backend.pipeline.graph.state import QAState, RetrievedChunk
+from backend.core.pinecone_client import get_index
 
 _CHAT_URL = (
     f"https://generativelanguage.googleapis.com/v1/models/"

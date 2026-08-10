@@ -1,6 +1,6 @@
 """
-app/embeddings.py
-─────────────────
+backend/core/embeddings.py
+──────────────────────────
 Thin wrapper around the Gemini Embeddings REST API.
 Calls the v1 REST endpoint directly via `requests` to avoid SDK version
 incompatibilities between google-genai (v1beta) and google-generativeai.
@@ -10,7 +10,7 @@ model: models/gemini-embedding-001
   - task_type: "RETRIEVAL_DOCUMENT" for ingest, "RETRIEVAL_QUERY" for queries
 
 Usage:
-    from app.embeddings import embed_documents, embed_query
+    from backend.core.embeddings import embed_documents, embed_query
 
     doc_vectors = embed_documents(["text one", "text two"])
     query_vector = embed_query("What is the notice period?")
@@ -22,7 +22,7 @@ from typing import List
 
 import requests
 
-from app.config import settings
+from backend.core.config import settings
 
 _BASE = "https://generativelanguage.googleapis.com/v1"
 

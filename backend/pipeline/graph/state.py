@@ -1,5 +1,5 @@
 """
-app/graph/state.py
+backend/pipeline/graph/state.py
 ──────────────────
 LangGraph state definition.
 

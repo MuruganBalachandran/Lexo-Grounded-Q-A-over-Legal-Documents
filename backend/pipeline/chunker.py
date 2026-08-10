@@ -1,5 +1,5 @@
 """
-app/chunker.py
+backend/pipeline/chunker.py
 ──────────────
 Section-based chunker for the legal markdown corpus.
 

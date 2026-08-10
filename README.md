@@ -31,10 +31,10 @@ If the documents don't say it, the system honestly refuses rather than hallucina
 Client
   │  POST /ask  {"question": "..."}
   ▼
-FastAPI (app/main.py)
+FastAPI (backend/main.py)
   │
   ▼
-LangGraph StateGraph (app/graph/)
+LangGraph StateGraph (backend/pipeline/graph/)
   │
   ├─ retrieve      → Pinecone vector search (Gemini gemini-embedding-001)
   ├─ grade_chunks  → Gemini 2.5 Flash LLM relevance judge
@@ -147,7 +147,7 @@ python -m app.ingest
 
 With a custom corpus directory:
 ```bash
-python -m app.ingest --dir path/to/your/corpus
+python -m backend.pipeline.ingest --dir path/to/your/corpus
 ```
 
 ### Option B — API route (after starting the server)
@@ -158,14 +158,14 @@ curl -X POST http://localhost:8000/ingest
 
 **What ingest does:**
 1. Creates the Pinecone index if it doesn't exist.
-2. Reads all `.md` files from `gen_ai_takehome_sample_corpus/`.
+2. Reads all `.md` files from `corpus/`.
 3. Splits each file by `##` section headings (one chunk per section).
-4. Embeds each chunk with Gemini `text-embedding-004` (`RETRIEVAL_DOCUMENT` task).
+4. Embeds each chunk with Gemini `gemini-embedding-001` (`RETRIEVAL_DOCUMENT` task).
 5. Upserts vectors to Pinecone with metadata: `chunk_id`, `source_file`, `section_title`, `text`.
 
 Expected output:
 ```
-[ingest] Starting ingest from 'gen_ai_takehome_sample_corpus' ...
+[ingest] Starting ingest from 'corpus' ...
 [pinecone] Index 'legixo-qa' already exists — skipping creation.
   [chunker] 01_matter_memo_arvind_v_northfield.md → 3 chunk(s)
   [chunker] 02_employment_agreement_excerpt.md → 4 chunk(s)
@@ -178,7 +178,7 @@ Expected output:
 ## Run the API Server
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn backend.main:app --reload
 ```
 
 The server starts at **http://localhost:8000**.

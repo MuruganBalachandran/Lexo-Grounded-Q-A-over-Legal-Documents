@@ -1,6 +1,6 @@
 """
-app/config.py
-─────────────
+backend/core/config.py
+──────────────────────
 Centralised settings loaded from .env via pydantic-settings.
 Every other module imports `settings` from here — no direct os.environ calls.
 """
@@ -28,14 +28,14 @@ class Settings(BaseSettings):
     # ── Gemini Models ─────────────────────────────────────────────────────────
     # gemini-embedding-001 produces 3072-dimensional vectors
     embed_model: str = "models/gemini-embedding-001"
-    chat_model: str = "gemini-1.5-flash"
+    chat_model: str = "gemini-2.5-flash"
 
     # ── Retrieval ────────────────────────────────────────────────────────────
     top_k: int = 5
     max_retries: int = 2
 
     # ── Corpus ────────────────────────────────────────────────────────────────
-    corpus_dir: str = "gen_ai_takehome_sample_corpus"
+    corpus_dir: str = "corpus"
 
 
 @lru_cache

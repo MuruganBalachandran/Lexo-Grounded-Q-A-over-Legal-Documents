@@ -1,17 +1,17 @@
 """
-app/ingest.py
+backend/pipeline/ingest.py
 ─────────────
 Ingest pipeline: load → chunk → embed → upsert to Pinecone.
 
 CLI usage (from project root):
-    python -m app.ingest
+    python -m backend.pipeline.ingest
 
 API usage:
-    POST /ingest  (wired in app/main.py)
+    POST /ingest  (wired in backend/api/routes/ingest.py)
 
 Idempotency guarantee
 ─────────────────────
-Chunk IDs are deterministic (see app/chunker.py).
+Chunk IDs are deterministic (see backend/pipeline/chunker.py).
 Running ingest twice on the same corpus produces identical IDs,
 so Pinecone's upsert overwrites existing vectors — vector count
 stays the same after a second run.
@@ -31,10 +31,10 @@ from __future__ import annotations
 import math
 from typing import List
 
-from app.chunker import Chunk, chunk_corpus
-from app.config import settings
-from app.embeddings import embed_documents
-from app.pinecone_client import get_index, get_or_create_index
+from backend.pipeline.chunker import Chunk, chunk_corpus
+from backend.core.config import settings
+from backend.core.embeddings import embed_documents
+from backend.core.pinecone_client import get_index, get_or_create_index
 
 # Pinecone recommends batch sizes of 100 or fewer
 _BATCH_SIZE = 50
