@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Typography */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Theme: Light (Ledger) */
+  --bg: #EEF0EA;
+  --surface: #FFFFFF;
+  --surfaceMuted: #F4F5F0;
+  --ink: #1B2A35;
+  --inkSecondary: #5B6B75;
+  --border: #D8DBD1;
+  --accent: #2E5339;
+  --accentMuted: #E1EAE4;
+  --citation: #9C6B30;
+  --citationMuted: #F1E6D6;
+  --refuse: #7A2E2E;
+  --refuseMuted: #F3E3E3;
+}
+
+[data-theme='dark'] {
+  /* Theme: Dark (Ledger) */
+  --bg: #10161C;
+  --surface: #1A222B;
+  --surfaceMuted: #212B35;
+  --ink: #E6E7E2;
+  --inkSecondary: #8C9199;
+  --border: #2A333C;
+  --accent: #5FA678;
+  --accentMuted: #1D2E24;
+  --citation: #C9974F;
+  --citationMuted: #33291A;
+  --refuse: #C1615B;
+  --refuseMuted: #331E1D;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}

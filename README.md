@@ -65,24 +65,38 @@ You need API keys for:
 
 ---
 
-## Installation
+## Installation & Quick Start (Full Stack)
 
+### 1. Backend (FastAPI)
 ```bash
-# 1. Clone the repo
+# Clone the repo
 git clone <your-repo-url>
-cd legixo-assignment
+cd legixo-assignment/backend
 
-# 2. Create and activate a virtual environment
+# Create and activate a virtual environment
 python -m venv .venv
+.venv\Scripts\activate     # Windows
+source .venv/bin/activate  # macOS / Linux
 
-# Windows
-.venv\Scripts\activate
-
-# macOS / Linux
-source .venv/bin/activate
-
-# 3. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
+
+# Run the API Server
+python -m uvicorn main:app --reload
+```
+
+### 2. Frontend (React + Vite)
+```bash
+cd legixo-assignment/frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
 ---
@@ -99,9 +113,9 @@ Open `.env` and set:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `GEMINI_API_KEY` | Google AI Studio API key | ✅ |
-| `PINECONE_API_KEY` | Pinecone API key | ✅ |
-| `PINECONE_INDEX_NAME` | Name of the index (default: `legixo-qa`) | ✅ |
+| `GEMINI_API_KEY` | Google AI Studio API key | Yes |
+| `PINECONE_API_KEY` | Pinecone API key | Yes |
+| `PINECONE_INDEX_NAME` | Name of the index (default: `legixo-qa`) | Yes |
 | `PINECONE_CLOUD` | Serverless cloud provider (default: `aws`) | optional |
 | `PINECONE_REGION` | Serverless region (default: `us-east-1`) | optional |
 | `EMBED_MODEL` | Gemini embedding model (default: `models/gemini-embedding-001`) | optional |
@@ -110,7 +124,7 @@ Open `.env` and set:
 | `MAX_RETRIES` | LangGraph retry limit (default: `2`) | optional |
 | `CORPUS_DIR` | Path to corpus folder (default: `gen_ai_takehome_sample_corpus`) | optional |
 
-> ⚠️ **Never commit `.env` to git** — it is listed in `.gitignore`.
+> **Note:** Never commit `.env` to git. It is already listed in `.gitignore`.
 
 ---
 
@@ -339,38 +353,32 @@ Pinecone `upsert` with existing IDs **overwrites** the vector — it does not cr
 
 ## Project Structure
 
-```
 legixo-assignment/
-├── app/
-│   ├── config.py          # Pydantic settings (reads .env)
-│   ├── embeddings.py      # Gemini text-embedding-004 wrapper
-│   ├── pinecone_client.py # Index creation + connection
-│   ├── chunker.py         # Section-based markdown splitter
-│   ├── ingest.py          # Ingest pipeline (CLI + function)
-│   ├── models.py          # FastAPI Pydantic schemas
-│   ├── main.py            # FastAPI app (/ask, /ingest, /health)
-│   └── graph/
-│       ├── state.py       # QAState TypedDict
-│       ├── nodes.py       # retrieve, grade_chunks, generate, not_found
-│       └── graph.py       # StateGraph wiring + compilation
-├── docs/
-│   └── langgraph.md       # Node table + Mermaid diagram
-├── eval/
-│   ├── test_cases.json    # 19 Q&A test cases
-│   ├── run_eval.py        # Automated eval script
-│   └── results.md         # Generated after running eval
-├── gen_ai_takehome_sample_corpus/   # 6 fictional legal .md files
-├── .env.example           # Dummy env vars template
+├── backend/               # Python FastAPI backend (see backend/README.md)
+│   ├── core/              # Config and Pydantic settings
+│   ├── pipeline/          # LangGraph QA flow, embeddings, and Pinecone client
+│   ├── eval/              # Test cases and evaluation scripts
+│   └── corpus/            # Fictional legal .md files
+├── frontend/              # React + Vite frontend (see frontend/README.md)
+│   ├── src/               # React application source code
+│   └── tailwind.config.js # Tailwind CSS configuration
 ├── .gitignore
-├── requirements.txt
 └── README.md
 ```
 
 ---
 
+## AI Tools Used
+
+I used AI tools to accelerate the development of this project. Specifically:
+- **Antigravity (Gemini Pro, Claude Sonnet)**: Served as an AI engineering assistant to help automate boilerplate code, rapidly refactor the UI into Tailwind CSS, and execute terminal commands during setup.
+- **Claude AI**: Helped brainstorm the high-level architecture, state management patterns, and design system choices (like the "Ledger" theme).
+
+---
+
 ## Demo Video
 
-🎬 **[Watch the 5-minute walkthrough](#)**  
+**[Watch the 5-minute walkthrough](#)**  
 *(Link will be added before submission)*
 
 Covers:
