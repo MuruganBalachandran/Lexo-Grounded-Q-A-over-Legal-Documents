@@ -10,7 +10,7 @@ model: models/gemini-embedding-001
   - task_type: "RETRIEVAL_DOCUMENT" for ingest, "RETRIEVAL_QUERY" for queries
 
 Usage:
-    from backend.core.embeddings import embed_documents, embed_query
+    from core.embeddings import embed_documents, embed_query
 
     doc_vectors = embed_documents(["text one", "text two"])
     query_vector = embed_query("What is the notice period?")
@@ -22,7 +22,7 @@ from typing import List
 
 import requests
 
-from backend.core.config import settings
+from core.config import settings
 
 _BASE = "https://generativelanguage.googleapis.com/v1"
 

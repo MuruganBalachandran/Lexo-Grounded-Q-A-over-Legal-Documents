@@ -33,9 +33,9 @@ from typing import Literal
 
 from langgraph.graph import END, START, StateGraph
 
-from backend.core.config import settings
-from backend.pipeline.graph.nodes import generate, grade_chunks, not_found, retrieve
-from backend.pipeline.graph.state import QAState
+from core.config import settings
+from pipeline.graph.nodes import generate, grade_chunks, not_found, retrieve
+from pipeline.graph.state import QAState
 
 # ── Routing function (conditional edge) ───────────────────────────────────────
 

@@ -1,7 +1,7 @@
 import traceback
 from fastapi import APIRouter, HTTPException
-from backend.api.schemas.qa import IngestResponse
-from backend.pipeline.ingest import run_ingest
+from api.schemas.qa import IngestResponse
+from pipeline.ingest import run_ingest
 
 router = APIRouter(tags=["Ingest"])
 

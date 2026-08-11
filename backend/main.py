@@ -15,8 +15,8 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Request
 
-from backend.pipeline.graph.graph import get_graph
-from backend.api.routes import health, ask, ingest
+from pipeline.graph.graph import get_graph
+from api.routes import health, ask, ingest
 
 
 @asynccontextmanager

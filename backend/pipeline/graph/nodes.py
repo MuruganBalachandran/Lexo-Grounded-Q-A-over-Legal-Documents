@@ -22,10 +22,10 @@ from typing import Any, Dict, List
 
 import requests
 
-from backend.core.config import settings
-from backend.core.embeddings import embed_query
-from backend.pipeline.graph.state import QAState, RetrievedChunk
-from backend.core.pinecone_client import get_index
+from core.config import settings
+from core.embeddings import embed_query
+from pipeline.graph.state import QAState, RetrievedChunk
+from core.pinecone_client import get_index
 
 _CHAT_URL = (
     f"https://generativelanguage.googleapis.com/v1/models/"

@@ -4,14 +4,17 @@ backend/core/config.py
 Centralised settings loaded from .env via pydantic-settings.
 Every other module imports `settings` from here — no direct os.environ calls.
 """
-
+1
 from functools import lru_cache
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+_ENV_PATH = Path(__file__).parent.parent / ".env"
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_PATH,
         env_file_encoding="utf-8",
         case_sensitive=False,
     )

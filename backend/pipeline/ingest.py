@@ -31,10 +31,10 @@ from __future__ import annotations
 import math
 from typing import List
 
-from backend.pipeline.chunker import Chunk, chunk_corpus
-from backend.core.config import settings
-from backend.core.embeddings import embed_documents
-from backend.core.pinecone_client import get_index, get_or_create_index
+from pipeline.chunker import Chunk, chunk_corpus
+from core.config import settings
+from core.embeddings import embed_documents
+from core.pinecone_client import get_index, get_or_create_index
 
 # Pinecone recommends batch sizes of 100 or fewer
 _BATCH_SIZE = 50

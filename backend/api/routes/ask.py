@@ -1,9 +1,9 @@
 import traceback
 from typing import Any, Dict
 from fastapi import APIRouter, HTTPException
-from backend.api.schemas.qa import AskRequest, AskResponse, Citation
-from backend.pipeline.graph.graph import get_graph
-from backend.pipeline.graph.state import QAState
+from api.schemas.qa import AskRequest, AskResponse, Citation
+from pipeline.graph.graph import get_graph
+from pipeline.graph.state import QAState
 
 router = APIRouter(tags=["Q&A"])
 

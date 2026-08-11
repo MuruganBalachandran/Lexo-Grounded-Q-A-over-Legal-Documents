@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.api.schemas.qa import HealthResponse
+from api.schemas.qa import HealthResponse
 
 router = APIRouter(tags=["Health"])
 

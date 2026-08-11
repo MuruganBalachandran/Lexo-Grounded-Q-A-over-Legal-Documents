@@ -20,7 +20,7 @@ import time
 
 from pinecone import Pinecone, ServerlessSpec
 
-from backend.core.config import settings
+from core.config import settings
 
 # ── Embedding dimension for models/gemini-embedding-001 ──────────────────────
 EMBED_DIM = 3072

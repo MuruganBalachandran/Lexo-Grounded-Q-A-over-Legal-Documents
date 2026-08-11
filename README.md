@@ -141,12 +141,14 @@ No manual Pinecone console steps needed.
 ### Option A — CLI (recommended)
 
 ```bash
-python -m app.ingest
+cd backend
+python -m pipeline.ingest
 ```
 
 With a custom corpus directory:
 ```bash
-python -m backend.pipeline.ingest --dir path/to/your/corpus
+cd backend
+python -m pipeline.ingest --dir path/to/your/corpus
 ```
 
 ### Option B — API route (after starting the server)
@@ -164,7 +166,7 @@ curl -X POST http://localhost:8000/ingest
 
 Expected output:
 ```
-[ingest] Starting ingest from 'backend/corpus' ...
+[ingest] Starting ingest from 'corpus' ...
 [pinecone] Index 'legixo-qa' already exists — skipping creation.
   [chunker] 01_matter_memo_arvind_v_northfield.md → 3 chunk(s)
   [chunker] 02_employment_agreement_excerpt.md → 4 chunk(s)
@@ -177,7 +179,8 @@ Expected output:
 ## Run the API Server
 
 ```bash
-uvicorn backend.main:app --reload
+cd backend
+uvicorn main:app --reload
 ```
 
 The server starts at **http://localhost:8000**.
@@ -308,9 +311,10 @@ START → retrieve → grade_chunks → [conditional edge]
 1. Ensure the API server is running (see above).
 2. Run the evaluation script:
    ```bash
-   python backend/eval/run_eval.py
+   cd backend
+   python eval/run_eval.py
    ```
-3. Full results will be written to `backend/eval/results.md`.
+3. Full results will be written to `eval/results.md`.
 
 The script runs all 19 test cases (16 in-corpus + 3 out-of-corpus) and saves a detailed report to `eval/results.md`.
 
