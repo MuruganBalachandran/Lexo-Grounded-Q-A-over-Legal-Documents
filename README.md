@@ -10,24 +10,20 @@ If the documents don't say it, the system honestly refuses rather than hallucina
 
 1. [Architecture Overview](#architecture-overview)
 2. [Prerequisites](#prerequisites)
-3. [Installation](#installation)
-4. [Environment Variables](#environment-variables)
-5. [Pinecone Index Setup](#pinecone-index-setup)
-6. [Ingest the Corpus](#ingest-the-corpus)
-7. [Run the API Server](#run-the-api-server)
-8. [API Reference](#api-reference)
-9. [Example curl Calls](#example-curl-calls)
-10. [LangGraph Flow](#langgraph-flow)
-11. [Eval / Self-test](#eval--self-test)
-12. [Running Ingest Twice](#running-ingest-twice)
-13. [Project Structure](#project-structure)
-14. [Demo Video](#demo-video)
+3. [Full-Stack Setup Guide](#full-stack-setup-guide)
+4. [API Reference & cURL Examples](#api-reference--curl-examples)
+5. [LangGraph Flow](#langgraph-flow)
+6. [Evaluation & Self-test](#evaluation--self-test)
+7. [Pinecone Details](#pinecone-details)
+8. [Project Structure](#project-structure)
+9. [AI Tools Used](#ai-tools-used)
+10. [Demo Video](#demo-video)
 
 ---
 
 ## Architecture Overview
 
-```
+```text
 Client
   │  POST /ask  {"question": "..."}
   ▼
@@ -56,7 +52,7 @@ Key choices:
 | Tool | Version |
 |------|---------|
 | Python | 3.10 or newer |
-| pip | latest |
+| Node.js| 18+ (for frontend UI) |
 | Git | any |
 
 You need API keys for:
@@ -65,51 +61,18 @@ You need API keys for:
 
 ---
 
-## Installation & Quick Start (Full Stack)
+## Full-Stack Setup Guide
 
-### 1. Backend (FastAPI)
+### 1. Environment Variables (Backend)
+
+First, configure your API keys.
+
 ```bash
-# Clone the repo
-git clone <your-repo-url>
-cd legixo-assignment/backend
-
-# Create and activate a virtual environment
-python -m venv .venv
-.venv\Scripts\activate     # Windows
-source .venv/bin/activate  # macOS / Linux
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the API Server
-python -m uvicorn main:app --reload
+cd backend
+cp .env.example .env
 ```
 
-### 2. Frontend (React + Vite)
-```bash
-cd legixo-assignment/frontend
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
----
-
-## Environment Variables
-
-You can start from the template:
-```bash
-cp backend/.env.example backend/.env
-```   # macOS/Linux
-copy .env.example .env # Windows
-
-Open `.env` and set:
+Open `.env` and configure:
 
 | Variable | Description | Required |
 |----------|-------------|----------|
@@ -118,182 +81,65 @@ Open `.env` and set:
 | `PINECONE_INDEX_NAME` | Name of the index (default: `legixo-qa`) | Yes |
 | `PINECONE_CLOUD` | Serverless cloud provider (default: `aws`) | optional |
 | `PINECONE_REGION` | Serverless region (default: `us-east-1`) | optional |
-| `EMBED_MODEL` | Gemini embedding model (default: `models/gemini-embedding-001`) | optional |
-| `CHAT_MODEL` | Gemini chat model (default: `gemini-2.5-flash`) | optional |
-| `TOP_K` | Pinecone top-k retrieval (default: `5`) | optional |
-| `MAX_RETRIES` | LangGraph retry limit (default: `2`) | optional |
-| `CORPUS_DIR` | Path to corpus folder (default: `gen_ai_takehome_sample_corpus`) | optional |
 
 > **Note:** Never commit `.env` to git. It is already listed in `.gitignore`.
 
----
-
-## Pinecone Index Setup
-
-The index is **created automatically** the first time you run ingest (if it doesn't already exist).
-
-**What gets created:**
-- Name: value of `PINECONE_INDEX_NAME` (default `legixo-qa`)
-- Type: Serverless (free tier)
-- Dimension: **3072** (Gemini `gemini-embedding-001` output size)
-- Metric: cosine
-
-**Required env vars for index creation:**
-```
-PINECONE_API_KEY=...
-PINECONE_INDEX_NAME=legixo-qa
-PINECONE_CLOUD=aws
-PINECONE_REGION=us-east-1
-```
-
-No manual Pinecone console steps needed.
-
----
-
-## Ingest the Corpus
-
-### Option A — CLI (recommended)
+### 2. Start the Backend API
 
 ```bash
 cd backend
+python -m venv .venv
+
+# Activate Virtual Environment
+.venv\Scripts\activate     # Windows
+source .venv/bin/activate  # macOS / Linux
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Ingest the fictional corpus into Pinecone
 python -m pipeline.ingest
+
+# Run the API Server (starts on port 8000)
+python -m uvicorn main:app --reload
 ```
 
-With a custom corpus directory:
-```bash
-cd backend
-python -m pipeline.ingest --dir path/to/your/corpus
-```
-
-### Option B — API route (after starting the server)
+### 3. Start the Frontend UI (Optional but Recommended)
 
 ```bash
-curl -X POST http://localhost:8000/ingest
-```
+cd frontend
 
-**What ingest does:**
-1. Creates the Pinecone index if it doesn't exist.
-2. Reads all `.md` files from `backend/corpus/`.
-3. Splits each file by `##` section headings (one chunk per section).
-4. Embeds each chunk with Gemini `gemini-embedding-001` (`RETRIEVAL_DOCUMENT` task).
-5. Upserts vectors to Pinecone with metadata: `chunk_id`, `source_file`, `section_title`, `text`.
+# Install Node dependencies
+npm install
 
-Expected output:
+# Start the Vite development server (starts on port 5173)
+npm run dev
 ```
-[ingest] Starting ingest from 'corpus' ...
-[pinecone] Index 'legixo-qa' already exists — skipping creation.
-  [chunker] 01_matter_memo_arvind_v_northfield.md → 3 chunk(s)
-  [chunker] 02_employment_agreement_excerpt.md → 4 chunk(s)
-  ...
-[ingest] Done. 18 vectors upserted from 6 file(s).
-```
+Open **[http://localhost:5173](http://localhost:5173)** to query the Q&A system using the "Ledger" interface!
 
 ---
 
-## Run the API Server
+## API Reference & cURL Examples
 
-```bash
-cd backend
-uvicorn main:app --reload
-```
+If you prefer testing the backend without the frontend, you can use the interactive Swagger UI at **[http://localhost:8000/docs](http://localhost:8000/docs)**, or use `curl`:
 
-The server starts at **http://localhost:8000**.
-
-Interactive API docs (OpenAPI / Swagger UI):
-```
-http://localhost:8000/docs
-```
-
----
-
-## API Reference
-
-### `GET /`
-Health check.
-
-**Response:**
-```json
-{ "status": "ok", "service": "legixo-qa-api", "version": "1.0.0" }
-```
-
----
-
-### `POST /ask`
-Answer a question from the document corpus.
-
-**Request:**
-```json
-{ "question": "string (3–2000 chars)" }
-```
-
-**Response:**
-```json
-{
-  "answer": "string",
-  "citations": [
-    {
-      "source_file": "02_employment_agreement_excerpt.md",
-      "chunk_id": "02_employment_agreement_excerpt.md::notice_period",
-      "snippet": "Either party may end this agreement by giving 60 days written notice...",
-      "score": 0.9123
-    }
-  ],
-  "grounded": true,
-  "trace": ["retrieve", "grade_chunks", "generate"]
-}
-```
-
-| Field | Description |
-|-------|-------------|
-| `answer` | Grounded answer or honest refusal |
-| `citations` | Source chunks used (empty on refusal) |
-| `grounded` | `true` = answered from corpus; `false` = refused |
-| `trace` | LangGraph nodes visited (for observability) |
-
----
-
-### `POST /ingest`
-Trigger corpus ingest from the API.
-
-**Response:**
-```json
-{ "files_processed": 6, "chunks_upserted": 18, "message": "Ingest complete." }
-```
-
----
-
-## Example curl Calls
-
-### Health check
+**Health Check:**
 ```bash
 curl http://localhost:8000/
 ```
 
-### Ask a question (in-corpus)
+**Ask an In-Corpus Question:**
 ```bash
 curl -X POST http://localhost:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "What notice period applies when Bluecrest ends the employment agreement?"}'
 ```
 
-### Ask a question (out-of-corpus — should be refused)
+**Ask an Out-of-Corpus Question (Refusal Test):**
 ```bash
 curl -X POST http://localhost:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "Who won case CV-2024-8812?"}'
-```
-
-### Trigger ingest via API
-```bash
-curl -X POST http://localhost:8000/ingest
-```
-
-### Windows PowerShell equivalent
-```powershell
-Invoke-RestMethod -Uri "http://localhost:8000/ask" `
-  -Method POST `
-  -ContentType "application/json" `
-  -Body '{"question": "What is the monthly rent for Unit 4B?"}'
 ```
 
 ---
@@ -301,58 +147,42 @@ Invoke-RestMethod -Uri "http://localhost:8000/ask" `
 ## LangGraph Flow
 
 A short summary of the LangGraph node logic is available in:
-**[`backend/docs/langgraph.md`](backend/docs/langgraph.md)** for the full node description table and Mermaid diagram.
+**[`backend/langgraph.md`](backend/langgraph.md)** (includes the full node description table and Mermaid diagram).
 
-**Quick summary:**
-
-```
+**Quick flow:**
+```text
 START → retrieve → grade_chunks → [conditional edge]
                                     ├─ sufficient   → generate → END
                                     ├─ insufficient + retries left → retrieve (loop)
                                     └─ insufficient + no retries   → not_found → END
 ```
 
-- **retrieve**: vector search Pinecone top-k
-- **grade_chunks**: Gemini LLM judges if chunks actually answer the question
-- **generate**: grounded answer + citations (good path)
-- **not_found**: honest refusal, no fabrication (bad path)
-- Loop cap: `MAX_RETRIES=2` — at most 3 total retrieval attempts
-
 ---
 
-## Eval / Self-test
+## Evaluation & Self-test
 
-1. Ensure the API server is running (see above).
-2. Run the evaluation script:
-   ```bash
-   cd backend
-   python eval/run_eval.py
-   ```
-3. Full results will be written to `eval/results.md`.
+The project includes an evaluation suite that tests against the provided gold-set (`sample_test_cases.json`).
+
+```bash
+cd backend
+python eval/run_eval.py
+```
 
 The script runs all 19 test cases (16 in-corpus + 3 out-of-corpus) and saves a detailed report to `eval/results.md`.
 
-Checks:
-- **In-corpus**: answer contains expected facts (substring) + citations include expected source file
-- **Out-of-corpus**: response is a refusal (`grounded=False` or refusal phrasing)
-
 ---
 
-## Running Ingest Twice
+## Pinecone Details
 
-**It is safe.** Chunk IDs are deterministic:
+**Creation:** The index is **created automatically** the first time you run ingest (if it doesn't already exist). It automatically configures it with 3072 dimensions for the Gemini model and cosine metric. No manual console steps are needed.
 
-```
-chunk_id = f"{source_file}::{section_slug}"
-# e.g. "02_employment_agreement_excerpt.md::notice_period"
-```
-
-Pinecone `upsert` with existing IDs **overwrites** the vector — it does not create duplicates. The vector count remains the same after a second ingest run.
+**Running Ingest Twice:** It is safe to run ingest multiple times. Chunk IDs are deterministic (`source_file::section_slug`). Pinecone `upsert` with existing IDs simply overwrites the vector rather than creating duplicates.
 
 ---
 
 ## Project Structure
 
+```text
 legixo-assignment/
 ├── backend/               # Python FastAPI backend (see backend/README.md)
 │   ├── core/              # Config and Pydantic settings
@@ -383,8 +213,7 @@ I used AI tools to accelerate the development of this project. Specifically:
 
 Covers:
 1. Install & env setup
-2. Ingest corpus (`python -m app.ingest`)
-3. Start server (`uvicorn app.main:app --reload`)
-4. Good answers with citations (curl)
-5. Out-of-corpus refusal demo
-6. LangGraph diagram walkthrough
+2. Ingest corpus (`python -m pipeline.ingest`)
+3. Start server (`uvicorn main:app --reload`)
+4. Ask endpoint demo (both in-corpus citations and out-of-corpus refusals)
+5. LangGraph diagram walkthrough
