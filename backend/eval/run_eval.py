@@ -166,7 +166,7 @@ def run_eval(host: str) -> None:
             })
 
         print()
-        time.sleep(0.5)  # gentle rate limiting
+        time.sleep(5.0)  # strict rate limiting (15 RPM free tier)
 
     # ── Summary ───────────────────────────────────────────────────────────────
     total = passed + failed + errors

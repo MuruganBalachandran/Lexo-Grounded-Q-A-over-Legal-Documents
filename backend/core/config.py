@@ -31,7 +31,8 @@ class Settings(BaseSettings):
     # ── Gemini Models ─────────────────────────────────────────────────────────
     # gemini-embedding-001 produces 3072-dimensional vectors
     embed_model: str = "models/gemini-embedding-001"
-    chat_model: str = "gemini-2.5-flash"
+    # Chat/generation model
+    chat_model: str = "gemini-3.6-flash"
 
     # ── Retrieval ────────────────────────────────────────────────────────────
     top_k: int = 5

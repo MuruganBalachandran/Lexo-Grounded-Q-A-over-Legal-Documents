@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { Citation } from '../../types/ask.types';
 import { formatCitation } from '../../utils/formatCitation';
 import { cn } from '../../utils/classNames';
+import ReactMarkdown from 'react-markdown';
 
 interface CitationChipProps {
   citation: Citation;
@@ -27,7 +28,9 @@ export const CitationChip: React.FC<CitationChipProps> = ({ citation }) => {
       
       {isOpen && (
         <div className="absolute top-[calc(100%+0.5rem)] left-0 z-20 w-max max-w-[320px] bg-surface border border-border rounded p-4 shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-top-1 duration-200">
-          <p className="text-sm mb-3 leading-relaxed">{citation.snippet}</p>
+          <div className="text-sm mb-3 leading-relaxed [&_h1]:font-semibold [&_h2]:font-semibold [&_h3]:font-semibold [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4">
+            <ReactMarkdown>{citation.snippet}</ReactMarkdown>
+          </div>
           <div className="flex flex-col gap-1 font-mono text-[0.7rem] text-inkSecondary">
             <span>Source: {citation.source_file}</span>
             <span>Relevance: {(citation.score * 100).toFixed(1)}%</span>

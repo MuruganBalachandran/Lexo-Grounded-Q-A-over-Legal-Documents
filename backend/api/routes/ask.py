@@ -39,9 +39,18 @@ async def ask(request: AskRequest) -> AskResponse:
         final_state: QAState = graph.invoke(initial_state)
     except Exception as exc:
         traceback.print_exc()
+        error_msg = str(exc)
+        
+        # Gracefully handle Gemini Free Tier rate limits
+        if "rate limit" in error_msg.lower():
+            raise HTTPException(
+                status_code=429,
+                detail="The AI provider's free-tier rate limit has been reached (15 requests/minute). Please wait 60 seconds and try your question again.",
+            )
+            
         raise HTTPException(
             status_code=502,
-            detail=f"Graph execution failed: {str(exc)}",
+            detail=f"Graph execution failed: {error_msg}",
         )
 
     citations = [

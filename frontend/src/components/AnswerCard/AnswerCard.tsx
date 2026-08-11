@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { AskResponse } from '../../types/ask.types';
 import { CitationChip } from '../CitationChip/CitationChip';
 
@@ -34,7 +35,9 @@ export const AnswerCard: React.FC<AnswerCardProps> = ({ isLoading, result }) => 
   return (
     <div className="bg-surface border border-border rounded-lg p-6 mt-6 transition-colors duration-200">
       <h2 className="text-xl text-accent mb-4 font-serif font-medium">Answer</h2>
-      <p className="font-serif text-lg leading-relaxed max-w-[65ch] mb-8">{result.answer}</p>
+      <div className="font-serif text-lg leading-relaxed max-w-[65ch] mb-8 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mt-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mt-2 [&_li]:mb-1 [&_strong]:font-semibold">
+        <ReactMarkdown>{result.answer}</ReactMarkdown>
+      </div>
       
       {result.citations.length > 0 && (
         <div className="border-t border-border pt-5">

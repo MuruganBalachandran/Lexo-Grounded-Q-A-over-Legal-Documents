@@ -27,21 +27,17 @@ from core.embeddings import embed_query
 from pipeline.graph.state import QAState, RetrievedChunk
 from core.pinecone_client import get_index
 
-_CHAT_URL = (
-    f"https://generativelanguage.googleapis.com/v1/models/"
-    f"gemini-2.5-flash:generateContent"
-)
-
-
 def _llm_invoke(prompt: str, max_retries: int = 4) -> str:
     """Call the Gemini generateContent REST endpoint directly (v1, no SDK).
     Retries with exponential backoff on 429 Too Many Requests.
     """
     import time
     delay = 5
+    chat_url = f"https://generativelanguage.googleapis.com/v1/models/{settings.chat_model}:generateContent"
+    
     for attempt in range(max_retries):
         resp = requests.post(
-            _CHAT_URL,
+            chat_url,
             params={"key": settings.gemini_api_key},
             json={
                 "contents": [{"parts": [{"text": prompt}]}],
