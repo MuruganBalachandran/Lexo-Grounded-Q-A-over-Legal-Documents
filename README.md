@@ -6,6 +6,10 @@ If the documents don't say it, the system honestly refuses rather than hallucina
 
 ---
 
+🎥 **[Watch the 5-Minute Architecture & Demo Walkthrough](https://drive.google.com/file/d/1fr8LRYbvvHZGsMt9jrsmFqDhPzsR6XO8/view?usp=sharing)**
+
+---
+
 ## Table of Contents
 
 1. [Architecture Overview](#architecture-overview)
@@ -208,8 +212,7 @@ I used AI tools to accelerate the development of this project. Specifically:
 
 ## Demo Video
 
-**[Watch the 5-minute walkthrough](#)**  
-*(Link will be added before submission)*
+**[Watch the 5-minute walkthrough](https://drive.google.com/file/d/1fr8LRYbvvHZGsMt9jrsmFqDhPzsR6XO8/view?usp=sharing)**
 
 Covers:
 1. Install & env setup
